@@ -1,0 +1,148 @@
+version: 0.89.0
+type: DeclarativeSource
+
+check:
+  type: CheckStream
+  stream_names:
+    - contacts
+
+definitions:
+  streams:
+    contacts:
+      type: DeclarativeStream
+      name: contacts
+      primary_key:
+        - id
+        - property
+        - timestamp
+      retriever:
+        type: SimpleRetriever
+        requester:
+          $ref: '#/definitions/base_requester'
+          path: objects/contacts
+          http_method: GET
+          request_parameters:
+            limit: '50'
+            properties: id
+            propertiesWithHistory: '{{ config["property_history"] }}'
+          error_handler:
+            type: CompositeErrorHandler
+            error_handlers:
+              - type: DefaultErrorHandler
+                backoff_strategies:
+                  - type: ConstantBackoffStrategy
+                    backoff_time_in_seconds: 5
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: CustomRecordExtractor
+            class_name: source_hubspot_history.components.MixpanelExportExtractor
+            field_path:
+              - [ ]
+#        record_selector:
+#          type: RecordSelector
+#          extractor:
+#            type: DpathExtractor
+#            field_path:
+#              - results
+#          schema_normalization: Default
+        paginator:
+          type: DefaultPaginator
+          page_token_option:
+            type: RequestOption
+            inject_into: request_parameter
+            field_name: after
+          pagination_strategy:
+            type: CursorPagination
+            cursor_value: '{{ response.get("paging", {}).get("next", {}).get("after", {}) }}'
+            stop_condition: >-
+              {{ not response.get("paging", {}).get("next", {}).get("after", {})
+              }}
+      transformations:
+        - type: RemoveFields
+          field_pointers:
+            - - properties
+        - type: RemoveFields
+          field_pointers:
+            - - createdAt
+        - type: RemoveFields
+          field_pointers:
+            - - archived
+        - type: RemoveFields
+          field_pointers:
+            - - updatedAt
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: '#/schemas/contacts'
+  base_requester:
+    type: HttpRequester
+    url_base: https://api.hubapi.com/crm/v3/
+    authenticator:
+      type: BearerAuthenticator
+      api_token: '{{ config["api_key"] }}'
+
+streams:
+  - $ref: '#/definitions/streams/contacts'
+
+spec:
+  type: Spec
+  documentation_url: https://docs.airbyte.com/integrations/sources/hubspot
+  connection_specification:
+    type: object
+    $schema: http://json-schema.org/draft-07/schema#
+    required:
+      - api_key
+      - property_history
+    properties:
+      api_key:
+        type: string
+        order: 0
+        title: API Key
+        airbyte_secret: true
+      property_history:
+        type: string
+        order: 1
+        title: property history
+        description: >-
+          A comma separated list of the properties to be returned in the
+          response. If any of the specified properties are not present on the
+          requested object(s), they will be ignored.
+    additionalProperties: true
+
+metadata:
+  autoImportSchema:
+    contacts: true
+
+schemas:
+  contacts:
+    type: object
+    $schema: http://json-schema.org/schema#
+    additionalProperties: true
+    properties:
+      id:
+        type: string
+      property:
+        type: string
+      sourceId:
+        type:
+          - string
+          - 'null'
+      sourceType:
+        type:
+          - string
+          - 'null'
+      timestamp:
+        type:
+          - string
+          - 'null'
+      updatedByUserId:
+        type:
+          - number
+          - 'null'
+      value:
+        type:
+          - string
+          - 'null'
+    required:
+      - id
