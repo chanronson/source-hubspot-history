@@ -20,10 +20,11 @@ definitions:
         record_selector:
           type: RecordSelector
           extractor:
-            type: CustomRecordExtractor
-            class_name: source_hubspot_history.components.MixpanelExportExtractor
+            type: DpathExtractor
             field_path:
-              - [ ]
+              - results
+              - "*"
+          schema_normalization: Default
       schema_loader:
         type: InlineSchemaLoader
         schema:
@@ -33,7 +34,8 @@ definitions:
       name: contacts
       primary_key:
         - id
-        - propertiesWithHistory
+        - property
+        - timestamp
       retriever:
         type: SimpleRetriever
         requester:
@@ -54,11 +56,10 @@ definitions:
         record_selector:
           type: RecordSelector
           extractor:
-            type: DpathExtractor
+            type: CustomRecordExtractor
+            class_name: source_hubspot_history.components.MixpanelExportExtractor
             field_path:
-              - results
-              - "*"
-          schema_normalization: Default
+              - [ ]
         paginator:
           type: DefaultPaginator
           page_token_option:
@@ -93,7 +94,8 @@ definitions:
       name: custom_objects
       primary_key:
         - id
-        - propertiesWithHistory
+        - property
+        - timestamp
       retriever:
         type: SimpleRetriever
         requester:
