@@ -20,37 +20,10 @@ definitions:
         record_selector:
           type: RecordSelector
           extractor:
-            type: DpathExtractor
+            type: CustomRecordExtractor
+            class_name: source_hubspot_history.components.MixpanelExportExtractor
             field_path:
-              - results
-      transformations:
-        - type: RemoveFields
-          field_pointers:
-            - - labels
-        - type: RemoveFields
-          field_pointers:
-            - - requiredProperties
-        - type: RemoveFields
-          field_pointers:
-            - - searchableProperties
-        - type: RemoveFields
-          field_pointers:
-            - - primaryDisplayProperty
-        - type: RemoveFields
-          field_pointers:
-            - - metaType
-        - type: RemoveFields
-          field_pointers:
-            - - fullyQualifiedName
-        - type: RemoveFields
-          field_pointers:
-            - - properties
-        - type: RemoveFields
-          field_pointers:
-            - - associations
-        - type: RemoveFields
-          field_pointers:
-            - - secondaryDisplayProperties
+              - [ ]
       schema_loader:
         type: InlineSchemaLoader
         schema:
@@ -141,11 +114,10 @@ definitions:
         record_selector:
           type: RecordSelector
           extractor:
-            type: DpathExtractor
+            type: CustomRecordExtractor
+            class_name: source_hubspot_history.components.MixpanelExportExtractor
             field_path:
-              - results
-              - "*"
-          schema_normalization: Default
+              - [ ]
         paginator:
           type: DefaultPaginator
           page_token_option:
@@ -310,200 +282,30 @@ schemas:
     properties:
       id:
         type: string
-      propertiesWithHistory:
-        type: object
-        properties:
-          access_status:
-            type:
-              - array
-              - "null"
-          became_churned_date:
-            type:
-              - array
-              - "null"
-          became_churned_reason:
-            type:
-              - array
-              - "null"
-          billing_status:
-            type:
-              - array
-              - "null"
-          contact_type:
-            type:
-              - array
-              - "null"
-            items:
-              type:
-                - object
-                - "null"
-              properties:
-                sourceId:
-                  type:
-                    - string
-                    - "null"
-                sourceType:
-                  type:
-                    - string
-                    - "null"
-                timestamp:
-                  type:
-                    - string
-                    - "null"
-                updatedByUserId:
-                  type:
-                    - number
-                    - "null"
-                value:
-                  type:
-                    - string
-                    - "null"
-          contract_status:
-            type:
-              - array
-              - "null"
-          copied_pro_membership_expiry_date_contactrecord:
-            type:
-              - array
-              - "null"
-          form_of_payment:
-            type:
-              - array
-              - "null"
-          hs_lifecyclestage_customer_date:
-            type:
-              - array
-              - "null"
-            items:
-              type:
-                - object
-                - "null"
-              properties:
-                sourceId:
-                  type:
-                    - string
-                    - "null"
-                sourceType:
-                  type:
-                    - string
-                    - "null"
-                timestamp:
-                  type:
-                    - string
-                    - "null"
-                updatedByUserId:
-                  type:
-                    - number
-                    - "null"
-                value:
-                  type:
-                    - string
-                    - "null"
-          i_d_like_to_renew:
-            type:
-              - array
-              - "null"
-          lifecyclestage:
-            type:
-              - array
-              - "null"
-            items:
-              type:
-                - object
-                - "null"
-              properties:
-                sourceId:
-                  type:
-                    - string
-                    - "null"
-                sourceLabel:
-                  type:
-                    - string
-                    - "null"
-                sourceType:
-                  type:
-                    - string
-                    - "null"
-                timestamp:
-                  type:
-                    - string
-                    - "null"
-                updatedByUserId:
-                  type:
-                    - number
-                    - "null"
-                value:
-                  type:
-                    - string
-                    - "null"
-          membership_auto_renew:
-            type:
-              - array
-              - "null"
-          membership_renew_opt_out:
-            type:
-              - array
-              - "null"
-          membership_renew_package:
-            type:
-              - array
-              - "null"
-          membership_renew_payment_agreement:
-            type:
-              - array
-              - "null"
-          membership_type:
-            type:
-              - array
-              - "null"
-            items:
-              type:
-                - object
-                - "null"
-              properties:
-                sourceId:
-                  type:
-                    - string
-                    - "null"
-                sourceType:
-                  type:
-                    - string
-                    - "null"
-                timestamp:
-                  type:
-                    - string
-                    - "null"
-                value:
-                  type:
-                    - string
-                    - "null"
-          probability_to_renew:
-            type:
-              - array
-              - "null"
-          re_attestation_status:
-            type:
-              - array
-              - "null"
-          recruit_id:
-            type:
-              - array
-              - "null"
-          renewal_date:
-            type:
-              - array
-              - "null"
-          self_attestation:
-            type:
-              - array
-              - "null"
-          self_attestation_yes_date:
-            type:
-              - array
-              - "null"
+      property:
+        type: string
+      sourceId:
+        type:
+          - string
+          - 'null'
+      sourceType:
+        type:
+          - string
+          - 'null'
+      timestamp:
+        type:
+          - string
+          - 'null'
+      updatedByUserId:
+        type:
+          - number
+          - 'null'
+      value:
+        type:
+          - string
+          - 'null'
     required:
       - id
-      - propertiesWithHistory
   custom_objects:
     type: object
     $schema: http://json-schema.org/schema#
@@ -511,38 +313,27 @@ schemas:
     properties:
       id:
         type: string
-      propertiesWithHistory:
-        type: object
-        properties:
-          primary_course_friendly_cohort_name:
-            type:
-              - array
-              - "null"
-            items:
-              type:
-                - object
-                - "null"
-              properties:
-                sourceId:
-                  type:
-                    - string
-                    - "null"
-                sourceType:
-                  type:
-                    - string
-                    - "null"
-                timestamp:
-                  type:
-                    - string
-                    - "null"
-                updatedByUserId:
-                  type:
-                    - number
-                    - "null"
-                value:
-                  type:
-                    - string
-                    - "null"
+      property:
+        type: string
+      sourceId:
+        type:
+          - string
+          - 'null'
+      sourceType:
+        type:
+          - string
+          - 'null'
+      timestamp:
+        type:
+          - string
+          - 'null'
+      updatedByUserId:
+        type:
+          - number
+          - 'null'
+      value:
+        type:
+          - string
+          - 'null'
     required:
       - id
-      - propertiesWithHistory
